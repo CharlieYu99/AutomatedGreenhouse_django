@@ -1,0 +1,20 @@
+
+<!-- <p>{{ views_dict }}</p>
+<p>{{ views_dict.name }}</p> -->
+
+<!-- {% load static %}
+{{views_dict.name}}<img src="{% static "images/cat.jpg" %}" alt="runoob-logo"> -->
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>HTML test page</title>
+    <link rel="stylesheet" href="/static/plugins/bootstrap-4.6.0-dist/css/bootstrap.css">
+  </head>
+  <body>
+    <p>这是我的页面</p>
+    {% load static %}
+    <img src="{% static "images/cat.jpg" %}" alt="runoob-logo">
+  </body>
+</html>

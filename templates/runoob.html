@@ -1,3 +1,4 @@
+{%extends "base.html" %}
 
 <!-- <p>{{ views_dict }}</p>
 <p>{{ views_dict.name }}</p> -->
@@ -5,7 +6,7 @@
 <!-- {% load static %}
 {{views_dict.name}}<img src="{% static "images/cat.jpg" %}" alt="runoob-logo"> -->
 
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
@@ -17,4 +18,8 @@
     {% load static %}
     <img src="{% static "images/cat.jpg" %}" alt="runoob-logo">
   </body>
-</html>
+</html> -->
+
+{% block mainbody %}
+<p>继承了 base.html 文件</p>
+{% endblock %}

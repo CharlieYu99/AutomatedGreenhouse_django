@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Camera Test</title>
+</head>
+<body>
+    
+    <h1>Camera</h1>
+    <img src='http://192.168.191.57:8000/video_feed/'>
+
+    <h1>The latest data collection</h1>
+    <p> time: {{ data_dic.time.0 }}</p> 
+    <p> humidity: {{ data_dic.sensor_humidity_inside.0 }}</p>
+    <p> temperature: {{ data_dic.sensor_temperature_inside.0 }}</p>
+    <p> light level: {{ data_dic.sensor_light_0.0}}</p>
+    <p> CO2 level: {{ data_dic.sensor_CO2_0.0}}</p>
+    <p> moisture level: {{data_dic.sensor_moisture_0.0}}</p>
+
+</body>
+</html>

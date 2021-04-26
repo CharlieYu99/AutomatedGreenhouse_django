@@ -22,4 +22,7 @@ from . import views
 urlpatterns = [
     url('runoob/', views.runoob),
     url('DB/', views.greenhouseDBRead),
+    url("camera/", views.index),
+    url("video_feed/", views.video_feed),
+    url("ControlPanel/", views.ControlPanel),
 ]

@@ -1,13 +1,47 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>菜鸟教程(runoob.com)</title>
+</head>
+<body>
+    <h1>Hello World!</h1>
+    <p>菜鸟教程 Django 测试。</p>
+    {% block mainbody %}
+       <p>original</p>
+    {% endblock %}
+
 <h1>The latest data collection</h1>
-<p> time: {{ data_dic.time.0 }}</p> 
-<p> humidity: {{ data_dic.sensor_humidity_inside.0 }}</p>
-<p> temperature: {{ data_dic.sensor_temperature_inside.0 }}</p>
-<p> light level: {{ data_dic.sensor_light_0.0}}</p>
-<p> CO2 level: {{ data_dic.sensor_CO2_0.0}}</p>
-<p> moisture level: {{data_dic.sensor_moisture_0.0}}</p>
-<!-- <p> </p>
-<p> </p>
-<p> </p>
-<p> </p>
-<p> </p> -->
-<!-- <h1>{{ data_dic }}</h1> -->
+<p> time: {{ data_dic.time }}</p> 
+<p> temperature: {{ data_dic.sensor_temperature_inside }}</p>
+<p> humidity: {{ data_dic.sensor_humidity_inside }}</p>
+<p> temperature indoor: {{ data_dic.sensor_temperature_outside }}</p>
+<p> humidity indoor: {{ data_dic.sensor_humidity_outside }}</p>
+<p> light level: {{ data_dic.sensor_light}}</p>
+<p> CO2 level: {{ data_dic.sensor_CO2}}</p>
+<p> moisture level: {{data_dic.sensor_moisture}}</p>
+
+<p> light state: {{data_dic.light}}</p>
+<p> water pump state: {{data_dic.waterpump}}</p>
+<p> fan0 state: {{data_dic.fan0}}</p>
+<p> fan1 state: {{data_dic.fan1}}</p>
+<p> humidifier state: {{data_dic.humidifier}}</p>
+<p> heater state: {{data_dic.heater}}</p>
+
+
+<p> light in 24h: {{data_dic.light_24h}}</p>
+<p> CO2 in 24h: {{data_dic.CO2_24h}}</p>
+<p> moisture0 in 24h: {{data_dic.moisture_24h_0}}</p>
+<p> moisture1 in 24h: {{data_dic.moisture_24h_1}}</p>
+<p> moisture2 in 24h: {{data_dic.moisture_24h_2}}</p>
+<p> moisture3 in 24h: {{data_dic.moisture_24h_3}}</p>
+<p> temperature in 24h: {{data_dic.temperature_24h}}</p>
+<p> humidity in 24h: {{data_dic.humidity_24h}}</p>
+
+
+<!-- <p> {{data_dic}}</p> -->
+
+</body>
+</html>

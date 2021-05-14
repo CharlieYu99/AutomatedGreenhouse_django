@@ -20,9 +20,10 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-    url('runoob/', views.runoob),
     url('DB/', views.greenhouseDBRead),
-    url("camera/", views.index),
+    # url("camera/", views.camera),
     url("video_feed/", views.video_feed),
     url("ControlPanel/", views.ControlPanel),
+    url("index/",views.index),
+    url("index",views.index),
 ]

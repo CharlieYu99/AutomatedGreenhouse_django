@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>Camera Test</title>
+        <title>Automated Greenhouse Control Panel</title>
 
         <script src="https://d3js.org/d3.v6.min.js"></script>
 
@@ -19,7 +19,7 @@
     </div>
 
     <div class="data">
-        <h2>The latest data collection</h2>
+        <h2>The latest data collected</h2>
 
         <p> time: {{ data_dic.time }}</p> 
 
@@ -39,12 +39,17 @@
         <p> humidifier state: {{data_dic.humidifier}}</p>
         <p> heater state: {{data_dic.heater}}</p>
 
-
-        {% comment %} <p> temp 24h: {{temp_list}}</p> {% endcomment %}
     </div>
 
-    <svg id="temperature_graph">
-    </svg>
+    <Temperature></Temperature>
+    <Humidity></Humidity>
+    <Light></Light>
+    <CO2></CO2>
+    <Moisture0></Moisture0>
+    <Moisture1></Moisture1>
+    <Moisture2></Moisture2>
+    <Moisture3></Moisture3>
+
 
     <div class="control">
 
@@ -85,12 +90,29 @@
 
 
     <script type="text/javascript">
-        var dataArray = {{ temp_list }};
-
+        
         var width = 500;
         var height = 300;
         var padding = { top: 50, right: 50, bottom: 50, left: 50 };
 
+        appendGraph("Temperature", {{visualization_data_dic.temperature_24h}});
+        appendGraph("Humidity", {{visualization_data_dic.humidity_24h}})
+        appendGraph("Light", {{visualization_data_dic.light_24h}})
+        appendGraph("CO2", {{visualization_data_dic.CO2_24h}})
+        appendGraph("Moisture0", {{visualization_data_dic.moisture_24h_0}})
+        appendGraph("Moisture1", {{visualization_data_dic.moisture_24h_1}})
+        appendGraph("Moisture2", {{visualization_data_dic.moisture_24h_2}})
+        appendGraph("Moisture3", {{visualization_data_dic.moisture_24h_3}})
+
+
+    function appendGraph(type, data){
+        var svg = d3.select(type)				
+        .append("svg") 
+        .attr("width", width)
+        .attr("height", height);
+
+
+        var dataArray = data;
         var min = d3.min(dataArray, function(d) {
             return d[1];
         })
@@ -105,10 +127,7 @@
                     .domain([min-5, max+5])
                     .range([height - padding.top - padding.bottom, 0]);
 
-        var svg = d3.select("svg")				
-                    {% comment %} .append("svg") {% endcomment %}
-                    .attr("width", width)
-                    .attr("height", height);
+
         
         // graph frame work
         var xAxis = d3.axisBottom()
@@ -153,15 +172,14 @@
         svg.append("text")
             .attr("transform", "translate(" + (width/2) + "," + (height - padding.bottom / 3) + ")")
             .style("text-anchor", "middle")
-            .text("number of hours ago");
+            .text("Number of hours ago");
         svg.append("text")
             .attr("transform", "rotate(-90)")
-            {% comment %} .attr("transform", "translate(" + padding.left + "," + (height - padding.bottom / 3) + ")") {% endcomment %}
             .attr("x", (-height / 2))
             .attr("y", 0)
             .attr("dy", "1em")
             .style("text-anchor" , "middle")
-            .text("temperature in degrees");
+            .text(type);
 
         //graph title
         svg.append("text")
@@ -169,11 +187,11 @@
             .attr("y", (padding.left / 2 ))
             .attr("text-anchor", "middle")
             .style("font-size", "20px")
-            .text("Temperature in the near 24h (record per hour)");
+            .text(type + " in the near 24h (record per hour)");
+        }
 
 
     </script>
-
 
 
     <!-- <form action="/AutomatedGreenhouse" method="post">

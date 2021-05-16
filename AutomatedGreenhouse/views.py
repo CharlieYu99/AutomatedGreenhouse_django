@@ -53,50 +53,8 @@ Light1 = Device(Light1_setting[0], Light1_setting[1])
 
 
 def greenhouseDBRead(request):
-    dbconn=pymysql.connect(
-    host="localhost",
-    database="GreenhouseDB",
-    user="Greenhouseadmin",
-    password="adminpassword",
-    port=3306,
-    charset='utf8'
-    )
-    # read the latest data
-    sqlcmd = "select * from experiment_data order by id desc limit 48"
-    df=pd.read_sql(sqlcmd,dbconn)
-    data_dic = df.to_dict("list")
 
-    dic_return = {}
-    dic_return["time"] = data_dic["time"][0][0:19]
-    dic_return["sensor_light"] = data_dic["sensor_light_0"][0]
-    dic_return["sensor_CO2"] = (int)(data_dic["sensor_CO2_0"][0] + data_dic["sensor_CO2_1"][0]) / 2
-    dic_return["sensor_moisture"] = (int)(data_dic["sensor_moisture_0"][0] + data_dic["sensor_moisture_1"][0] + data_dic["sensor_moisture_2"][0] + data_dic["sensor_moisture_3"][0]) / 4
-    dic_return["sensor_temperature_inside"] = data_dic["sensor_temperature_inside"][0]
-    dic_return["sensor_temperature_outside"] = data_dic["sensor_temperature_outside"][0] if data_dic["sensor_humidity_outside"][0] < 100 else "null"
-    dic_return["sensor_humidity_inside"] = data_dic["sensor_humidity_inside"][0]
-    dic_return["sensor_humidity_outside"] = data_dic["sensor_humidity_outside"][0] if data_dic["sensor_humidity_outside"][0] < 100 else "null"
-
-    dic_return["light"] = "On" if data_dic["device_light"][0] == 1 else "Off"
-    dic_return["waterpump"] = "On" if data_dic["device_waterpump"][0] else "Off"
-    dic_return["fan0"] = "On" if data_dic["device_fan_0"][0] else "Off"
-    dic_return["fan1"] = "On" if data_dic["device_fan_1"][0] else "Off"
-    dic_return["humidifier"] = "On" if data_dic["device_humidifier"][0] else "Off"
-    dic_return["heater"] = "On" if data_dic["device_heater"][0] else "Off"
-
-    dic_return["light_24h"] = data_dic["sensor_light_0"]
-    CO2_24h = data_dic["sensor_light_0"]
-    CO2_24h_ = data_dic["sensor_light_1"]
-    for i in range(len(CO2_24h)):
-        CO2_24h[i] += CO2_24h_[i]
-    dic_return["CO2_24h"] = CO2_24h
-    dic_return["moisture_24h_0"] = data_dic["sensor_moisture_0"]
-    dic_return["moisture_24h_1"] = data_dic["sensor_moisture_1"]
-    dic_return["moisture_24h_2"] = data_dic["sensor_moisture_2"]
-    dic_return["moisture_24h_3"] = data_dic["sensor_moisture_3"]
-    dic_return["temperature_24h"] = data_dic["sensor_temperature_inside"]
-    dic_return["humidity_24h"] = data_dic["sensor_humidity_inside"]
-
-    return render(request, 'testHTML.html', {"data_dic": dic_return})
+    return render(request, 'testHTML.html', {"data_dic": DB_request_base()})
 
 
 def runoob(request):
@@ -149,44 +107,39 @@ def ControlPanel(request):
     df=pd.read_sql(sqlcmd,dbconn)
     data_dic = df.to_dict("list")
 
-    dic_return = {}
-    dic_return["time"] = data_dic["time"][0][0:19]
-    dic_return["sensor_light"] = data_dic["sensor_light_0"][0]
-    dic_return["sensor_CO2"] = (int)(data_dic["sensor_CO2_0"][0] + data_dic["sensor_CO2_1"][0]) / 2
-    dic_return["sensor_moisture"] = (int)(data_dic["sensor_moisture_0"][0] + data_dic["sensor_moisture_1"][0] + data_dic["sensor_moisture_2"][0] + data_dic["sensor_moisture_3"][0]) / 4
-    dic_return["sensor_temperature_inside"] = data_dic["sensor_temperature_inside"][0]
-    dic_return["sensor_temperature_outside"] = data_dic["sensor_temperature_outside"][0] if data_dic["sensor_humidity_outside"][0] < 100 else "null"
-    dic_return["sensor_humidity_inside"] = data_dic["sensor_humidity_inside"][0]
-    dic_return["sensor_humidity_outside"] = data_dic["sensor_humidity_outside"][0] if data_dic["sensor_humidity_outside"][0] < 100 else "null"
+    return_data_dic = {}
+    return_data_dic["time"] = data_dic["time"][0][0:19]
+    return_data_dic["sensor_light"] = data_dic["sensor_light_0"][0]
+    return_data_dic["sensor_CO2"] = (int)((data_dic["sensor_CO2_0"][0] + data_dic["sensor_CO2_1"][0]) / 2)
+    return_data_dic["sensor_moisture"] = (int)((data_dic["sensor_moisture_0"][0] + data_dic["sensor_moisture_1"][0] + data_dic["sensor_moisture_2"][0] + data_dic["sensor_moisture_3"][0]) / 4)
+    return_data_dic["sensor_temperature_inside"] = data_dic["sensor_temperature_inside"][0]
+    return_data_dic["sensor_temperature_outside"] = data_dic["sensor_temperature_outside"][0] if data_dic["sensor_humidity_outside"][0] < 100 else "null"
+    return_data_dic["sensor_humidity_inside"] = data_dic["sensor_humidity_inside"][0]
+    return_data_dic["sensor_humidity_outside"] = data_dic["sensor_humidity_outside"][0] if data_dic["sensor_humidity_outside"][0] < 100 else "null"
 
-    dic_return["light"] = "On" if data_dic["device_light"][0] == 1 else "Off"
-    dic_return["waterpump"] = "On" if data_dic["device_waterpump"][0] else "Off"
-    dic_return["fan0"] = "On" if data_dic["device_fan_0"][0] else "Off"
-    dic_return["fan1"] = "On" if data_dic["device_fan_1"][0] else "Off"
-    dic_return["humidifier"] = "On" if data_dic["device_humidifier"][0] else "Off"
-    dic_return["heater"] = "On" if data_dic["device_heater"][0] else "Off"
+    return_data_dic["light"] = "On" if data_dic["device_light"][0] == 1 else "Off"
+    return_data_dic["waterpump"] = "On" if data_dic["device_waterpump"][0] else "Off"
+    return_data_dic["fan0"] = "On" if data_dic["device_fan_0"][0] else "Off"
+    return_data_dic["fan1"] = "On" if data_dic["device_fan_1"][0] else "Off"
+    return_data_dic["humidifier"] = "On" if data_dic["device_humidifier"][0] else "Off"
+    return_data_dic["heater"] = "On" if data_dic["device_heater"][0] else "Off"
 
-    dic_return["light_24h"] = data_dic["sensor_light_0"]
+    visualization_data_dic = {}
+    visualization_data_dic["light_24h"] = data_for_visualization(data_dic["sensor_light_0"])
     CO2_24h = data_dic["sensor_light_0"]
     CO2_24h_ = data_dic["sensor_light_1"]
     for i in range(len(CO2_24h)):
         CO2_24h[i] += CO2_24h_[i]
-    dic_return["CO2_24h"] = CO2_24h
-    dic_return["moisture_24h_0"] = data_dic["sensor_moisture_0"]
-    dic_return["moisture_24h_1"] = data_dic["sensor_moisture_1"]
-    dic_return["moisture_24h_2"] = data_dic["sensor_moisture_2"]
-    dic_return["moisture_24h_3"] = data_dic["sensor_moisture_3"]
-    dic_return["temperature_24h"] = data_dic["sensor_temperature_inside"]
-    dic_return["humidity_24h"] = data_dic["sensor_humidity_inside"]
-
-    temp24h = data_dic["sensor_temperature_inside"]
-    temp_24h = []
-    for i in range(int(len(temp24h)/2)):
-        temp_24h.append([24-i,temp24h[i*2]])
-        
+    visualization_data_dic["CO2_24h"] = data_for_visualization(CO2_24h)
+    visualization_data_dic["moisture_24h_0"] = data_for_visualization(data_dic["sensor_moisture_0"])
+    visualization_data_dic["moisture_24h_1"] = data_for_visualization(data_dic["sensor_moisture_1"])
+    visualization_data_dic["moisture_24h_2"] = data_for_visualization(data_dic["sensor_moisture_2"])
+    visualization_data_dic["moisture_24h_3"] = data_for_visualization(data_dic["sensor_moisture_3"])
+    visualization_data_dic["temperature_24h"] = data_for_visualization(data_dic["sensor_temperature_inside"])
+    visualization_data_dic["humidity_24h"] = data_for_visualization(data_dic["sensor_humidity_inside"])
 
 
-    return render(request, 'ControlPanel.html', {"data_dic": dic_return, "temp_list": json.dumps(temp_24h)})
+    return render(request, 'ControlPanel.html', {"data_dic": return_data_dic, "visualization_data_dic": visualization_data_dic})
 
 def index(request):
     return render(request, 'index.html')
@@ -238,5 +191,60 @@ def device_control_helper(device, duration, on_time, off_time):
         device.off()
         time.sleep(off_time)
 
+def DB_request_base():
+    dbconn=pymysql.connect(
+    host="localhost",
+    database="GreenhouseDB",
+    user="Greenhouseadmin",
+    password="adminpassword",
+    port=3306,
+    charset='utf8'
+    )
+    # read the latest data
+    sqlcmd = "select * from experiment_data order by id desc limit 48"
+    df=pd.read_sql(sqlcmd,dbconn)
+    data_dic = df.to_dict("list")
 
+    dic_return = {}
+    dic_return["time"] = data_dic["time"][0][0:19]
+    dic_return["sensor_light"] = data_dic["sensor_light_0"][0]
+    dic_return["sensor_CO2"] = (int)(data_dic["sensor_CO2_0"][0] + data_dic["sensor_CO2_1"][0]) / 2
+    dic_return["sensor_moisture"] = (int)(data_dic["sensor_moisture_0"][0] + data_dic["sensor_moisture_1"][0] + data_dic["sensor_moisture_2"][0] + data_dic["sensor_moisture_3"][0]) / 4
+    dic_return["sensor_temperature_inside"] = data_dic["sensor_temperature_inside"][0]
+    dic_return["sensor_temperature_outside"] = data_dic["sensor_temperature_outside"][0] if data_dic["sensor_humidity_outside"][0] < 100 else "null"
+    dic_return["sensor_humidity_inside"] = data_dic["sensor_humidity_inside"][0]
+    dic_return["sensor_humidity_outside"] = data_dic["sensor_humidity_outside"][0] if data_dic["sensor_humidity_outside"][0] < 100 else "null"
+
+    dic_return["light"] = "On" if data_dic["device_light"][0] == 1 else "Off"
+    dic_return["waterpump"] = "On" if data_dic["device_waterpump"][0] else "Off"
+    dic_return["fan0"] = "On" if data_dic["device_fan_0"][0] else "Off"
+    dic_return["fan1"] = "On" if data_dic["device_fan_1"][0] else "Off"
+    dic_return["humidifier"] = "On" if data_dic["device_humidifier"][0] else "Off"
+    dic_return["heater"] = "On" if data_dic["device_heater"][0] else "Off"
+
+    dic_return["light_24h"] = data_dic["sensor_light_0"]
+    CO2_24h = data_dic["sensor_light_0"]
+    CO2_24h_ = data_dic["sensor_light_1"]
+    for i in range(len(CO2_24h)):
+        CO2_24h[i] += CO2_24h_[i]
+    dic_return["moisture_24h_0"] = data_dic["sensor_moisture_0"]
+    dic_return["moisture_24h_1"] = data_dic["sensor_moisture_1"]
+    dic_return["moisture_24h_2"] = data_dic["sensor_moisture_2"]
+    dic_return["moisture_24h_3"] = data_dic["sensor_moisture_3"]
+    dic_return["temperature_24h"] = data_dic["sensor_temperature_inside"]
+    dic_return["humidity_24h"] = data_dic["sensor_humidity_inside"]
+    return dic_return
         
+def data_for_visualization(data_list):
+    list_return = []
+    for i in range(int(len(data_list)/2)):
+        list_return.append([24-i,data_list[i*2]])
+    return list_return
+
+def data_for_visualization_scale(data_list):
+    list_return = []
+    for i in range(int(len(data_list)/2)):
+        list_return.append([24-i,data_list[i*2]])
+    return list_return
+
+# def user_control_tag(device_name):

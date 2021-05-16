@@ -23,6 +23,7 @@ urlpatterns = [
     url('DB/', views.greenhouseDBRead),
     # url("camera/", views.camera),
     url("video_feed/", views.video_feed),
+    url("ControlPanel", views.ControlPanel),
     url("ControlPanel/", views.ControlPanel),
     url("index/",views.index),
     url("index",views.index),

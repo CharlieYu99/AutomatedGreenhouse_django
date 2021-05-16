@@ -78,7 +78,7 @@ class Camera(BaseCamera):
         def frames():
                 with picamera.PiCamera() as camera:
                         # 让相机热热身
-                        camera.resolution = (500,375)
+                        camera.resolution = (640,480)
                         time.sleep(2)
                         stream = io.BytesIO()
                         for foo in camera.capture_continuous(stream, 'jpeg',use_video_port=True):

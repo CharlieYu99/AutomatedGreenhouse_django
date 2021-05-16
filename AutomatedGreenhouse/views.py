@@ -10,6 +10,7 @@ import pymysql
 import threading
 import time
 import json
+import datetime
 
 # smart plug libraries
 from .smartplug import SmartPlug
@@ -52,19 +53,6 @@ Light0 = Device(Light0_setting[0], Light0_setting[1])
 Light1 = Device(Light1_setting[0], Light1_setting[1])
 
 
-def greenhouseDBRead(request):
-
-    return render(request, 'testHTML.html', {"data_dic": DB_request_base()})
-
-
-def runoob(request):
-    views_dict = {"name":"菜鸟教程"}
-    return render(request, 'runoob.html', {"views_dict": views_dict})
-
-
-# def camera(request):
-#         return render(request,'camera.html')  
-
 
 def video_feed(request):
         return StreamingHttpResponse(gen(Camera()),content_type='multipart/x-mixed-replace; boundary=frame')
@@ -80,18 +68,43 @@ def gen(camera):
 def ControlPanel(request):
     if 'button_light_on' in request.POST:
         Light0.on()
+        user_control_tag("light")
     elif 'button_light_off' in request.POST:
         Light0.off()
+        user_control_tag("light")
+    if 'button_fan0_on' in request.POST:
+        Fan0.on()
+        user_control_tag("fan0")
+    elif 'button_fan0_off' in request.POST:
+        Fan0.off()
+        user_control_tag("fan0")
+    if 'button_fan1_on' in request.POST:
+        Fan1.on()
+        user_control_tag("fan1")
+    elif 'button_fan1_off' in request.POST:
+        Fan1.off()
+        user_control_tag("fan1")
     elif 'button_waterpump_on' in request.POST:
         device_control_single(Pump,10)
+        user_control_tag("waterpump")
     elif 'button_humidifier_on_strong' in request.POST:
         device_control_single(Humidifier,60*30,30,30)
+        user_control_tag("humidifier")
     elif 'button_humidifier_on_weak' in request.POST:
         device_control_single(Humidifier,60*30,30,30)
+        user_control_tag("humidifier")
+    elif 'button_humidifier_off' in request.POST:
+        Humidifier.off()
+        user_control_tag("humidifier")
     elif 'button_heeter_on_strong' in request.POST:
         device_control_single(Heater,60*30,30,150)
-    elif 'button_humidifier_on_weak' in request.POST:
+        user_control_tag("heater")
+    elif 'button_heater_on_weak' in request.POST:
         device_control_single(Heater,60*30,30,90)
+        user_control_tag("heater")
+    elif 'button_heater_off' in request.POST:
+        Heater.off()
+        user_control_tag("heater")
 
     dbconn=pymysql.connect(
     host="localhost",
@@ -103,7 +116,7 @@ def ControlPanel(request):
     )
     
     # read the latest data
-    sqlcmd = "select * from experiment_data order by id desc limit 48"
+    sqlcmd = "select * from environment_status order by id desc limit 48"
     df=pd.read_sql(sqlcmd,dbconn)
     data_dic = df.to_dict("list")
 
@@ -125,16 +138,16 @@ def ControlPanel(request):
     return_data_dic["heater"] = "On" if data_dic["device_heater"][0] else "Off"
 
     visualization_data_dic = {}
-    visualization_data_dic["light_24h"] = data_for_visualization(data_dic["sensor_light_0"])
+    visualization_data_dic["light_24h"] = data_for_visualization_scale(data_dic["sensor_light_0"])
     CO2_24h = data_dic["sensor_light_0"]
     CO2_24h_ = data_dic["sensor_light_1"]
     for i in range(len(CO2_24h)):
         CO2_24h[i] += CO2_24h_[i]
-    visualization_data_dic["CO2_24h"] = data_for_visualization(CO2_24h)
-    visualization_data_dic["moisture_24h_0"] = data_for_visualization(data_dic["sensor_moisture_0"])
-    visualization_data_dic["moisture_24h_1"] = data_for_visualization(data_dic["sensor_moisture_1"])
-    visualization_data_dic["moisture_24h_2"] = data_for_visualization(data_dic["sensor_moisture_2"])
-    visualization_data_dic["moisture_24h_3"] = data_for_visualization(data_dic["sensor_moisture_3"])
+    visualization_data_dic["CO2_24h"] = data_for_visualization_scale(CO2_24h)
+    visualization_data_dic["moisture_24h_0"] = data_for_visualization_scale(data_dic["sensor_moisture_0"])
+    visualization_data_dic["moisture_24h_1"] = data_for_visualization_scale(data_dic["sensor_moisture_1"])
+    visualization_data_dic["moisture_24h_2"] = data_for_visualization_scale(data_dic["sensor_moisture_2"])
+    visualization_data_dic["moisture_24h_3"] = data_for_visualization_scale(data_dic["sensor_moisture_3"])
     visualization_data_dic["temperature_24h"] = data_for_visualization(data_dic["sensor_temperature_inside"])
     visualization_data_dic["humidity_24h"] = data_for_visualization(data_dic["sensor_humidity_inside"])
 
@@ -144,32 +157,6 @@ def ControlPanel(request):
 def index(request):
     return render(request, 'index.html')
 
-
-
-
-# def ButtonActions(request):
-
-#     if 'button_light_on' in request.POST:
-#         Light0.on()
-#     elif 'button_light_off' in request.POST:
-#         Light0.off()
-#     elif 'button_waterpump_on' in request.POST:
-#         device_control_single(Pump,10)
-
-#     dbconn=pymysql.connect(
-#     host="localhost",
-#     database="GreenhouseDB",
-#     user="Greenhouseadmin",
-#     password="adminpassword",
-#     port=3306,
-#     charset='utf8'
-#     )
-    
-#     # read the latest data
-#     sqlcmd = "select * from experiment_data order by id desc limit 1"
-#     df=pd.read_sql(sqlcmd,dbconn)
-#     data_dic = df.to_dict("list")
-#     return render(request, 'ControlPanel.html', {"data_dic": data_dic})
 
 def device_control_single(device, on_time):
     t = threading.Thread(target=device_control_helper,args=(device,on_time))
@@ -191,7 +178,53 @@ def device_control_helper(device, duration, on_time, off_time):
         device.off()
         time.sleep(off_time)
 
-def DB_request_base():
+
+        
+def data_for_visualization(data_list):
+    list_return = []
+    for i in range(int(len(data_list)/2)):
+        list_return.append([i,data_list[i*2]])
+    return list_return
+
+def data_for_visualization_scale(data_list):
+    list_return = []
+    for i in range(int(len(data_list)/2)):
+        list_return.append([i,int(data_list[i*2]/10000)])
+    return list_return
+
+
+def user_control_tag(device_name):
+    t = threading.Thread(target=user_control_tag_helper,args=[device_name])
+    t.start()
+
+def user_control_tag_helper(device_name):
+    conn=pymysql.connect(host='localhost',
+                             port=3306,
+                             user='Greenhouseadmin',
+                             password='adminpassword',
+                             db='GreenhouseDB',
+                             charset='utf8')
+    cur=conn.cursor()
+    sql = "INSERT INTO user_control (time, " + device_name + ") VALUES (%s, %s);"
+    val = ( datetime.datetime.now(), True)
+    cur.execute(sql,val)
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    # wait for 30min
+    time.sleep(30 *60)
+
+    cur=conn.cursor()
+    sql = "INSERT INTO user_control (time," + device_name + ") VALUES (%s, %s);"
+    val = ( datetime.datetime.now(), False)
+    cur.execute(sql,val)
+    conn.commit()
+    cur.close()
+    conn.close()
+
+
+def greenhouseDBRead(request):
     dbconn=pymysql.connect(
     host="localhost",
     database="GreenhouseDB",
@@ -233,18 +266,17 @@ def DB_request_base():
     dic_return["moisture_24h_3"] = data_dic["sensor_moisture_3"]
     dic_return["temperature_24h"] = data_dic["sensor_temperature_inside"]
     dic_return["humidity_24h"] = data_dic["sensor_humidity_inside"]
-    return dic_return
-        
-def data_for_visualization(data_list):
-    list_return = []
-    for i in range(int(len(data_list)/2)):
-        list_return.append([24-i,data_list[i*2]])
-    return list_return
 
-def data_for_visualization_scale(data_list):
-    list_return = []
-    for i in range(int(len(data_list)/2)):
-        list_return.append([24-i,data_list[i*2]])
-    return list_return
+    sqlcmd = "select * from user_control order by id desc limit 48"
+    df=pd.read_sql(sqlcmd,dbconn)
+    controlInfo_dic = df.to_dict("list")
 
-# def user_control_tag(device_name):
+    sqlcmd = "select light from user_control order by id desc limit 48"
+    df=pd.read_sql(sqlcmd,dbconn)
+    light_controlInfo_dic = df.to_dict("list")["light"][0] == True
+
+    sqlcmd = "select humidifier from user_control order by humidifier desc limit 48"
+    df=pd.read_sql(sqlcmd,dbconn)
+    humidifier_controlInfo_dic = df.to_dict("list")
+
+    return render(request, 'testHTML.html', {"data_dic": dic_return, "controlInfo_dic":controlInfo_dic, "light_controlInfo_dic":light_controlInfo_dic, "humidifier_controlInfo_dic":humidifier_controlInfo_dic})

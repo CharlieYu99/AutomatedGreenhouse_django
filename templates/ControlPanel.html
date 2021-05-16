@@ -5,7 +5,55 @@
         <title>Automated Greenhouse Control Panel</title>
 
         <script src="https://d3js.org/d3.v6.min.js"></script>
+        <style>
+            body {
+                background-color: #c6dfc8;  
+            }
 
+            .button {
+                margin-bottom: 6px;
+                padding: 10px 20px;
+                font-size: 16px;
+                text-align: center;
+                cursor: pointer;
+                outline: none;
+                color: #fff;
+                background-color: #04AA6D;
+                border: none;
+                border-radius: 10px;
+                box-shadow: 0 4px #999;
+            }
+
+            .button:hover {background-color: #55BB8A}
+
+            .button:active {
+                background-color: #3e8e41;
+                box-shadow: 0 4px #666;
+                transform: translateY(4px);
+            }
+
+            .title {
+                padding: 10px 20px;
+                margin-bottom: 10px;
+                border-radius: 36px;
+                font-size: 24px;
+                background-color: #2bae85;
+                text-align: center;
+            }
+
+            .subtitle {
+                padding: 3px 36px;
+                margin-top: 10px;
+                margin-bottom: 10px;
+                border-radius: 24px;
+                font-size: 16px;
+                background-color: #83cbac;
+            }
+
+            .data_show {
+                padding: 3px 36px;
+            }
+        </style>
         
     </head>
 <body>
@@ -13,77 +61,119 @@
     <div class="title">
         <h1>Automated Greenhouse Control Panel</h1>
     </div>
+
     <div class="camera">
-        <h2>Camera</h2>
+        <div class="subtitle">
+            <h2>Camera</h2>
+        </div>
         <img src='http://192.168.191.57:8000/video_feed/'>
     </div>
 
     <div class="data">
-        <h2>The latest data collected</h2>
 
-        <p> time: {{ data_dic.time }}</p> 
+        <div class="subtitle">
+            <h2>The latest data collected</h2>
+        </div>        
 
-        <p> temperature: {{ data_dic.sensor_temperature_inside }}</p>
+        <div class="data_show">
+            <p> Time: {{ data_dic.time }}</p> 
 
-        <p> humidity: {{ data_dic.sensor_humidity_inside }}</p>
-        <p> temperature indoor: {{ data_dic.sensor_temperature_outside }}</p>
-        <p> humidity indoor: {{ data_dic.sensor_humidity_outside }}</p>
-        <p> light level: {{ data_dic.sensor_light}}</p>
-        <p> CO2 level: {{ data_dic.sensor_CO2}}</p>
-        <p> moisture level: {{data_dic.sensor_moisture}}</p>
-        
-        <p> light state: {{data_dic.light}}</p>
-        <p> water pump state: {{data_dic.waterpump}}</p>
-        <p> fan0 state: {{data_dic.fan0}}</p>
-        <p> fan1 state: {{data_dic.fan1}}</p>
-        <p> humidifier state: {{data_dic.humidifier}}</p>
-        <p> heater state: {{data_dic.heater}}</p>
+            <p> Temperature: {{ data_dic.sensor_temperature_inside }}</p>
 
+            <p> Humidity: {{ data_dic.sensor_humidity_inside }}</p>
+            <p> Temperature indoor: {{ data_dic.sensor_temperature_outside }}</p>
+            <p> Humidity indoor: {{ data_dic.sensor_humidity_outside }}</p>
+            <p> Light level: {{ data_dic.sensor_light}}</p>
+            <p> CO2 level: {{ data_dic.sensor_CO2}}</p>
+            <p> Moisture level: {{data_dic.sensor_moisture}}</p>
+            
+            <p> Light state: {{data_dic.light}}</p>
+            <p> Water pump state: {{data_dic.waterpump}}</p>
+            <p> Fan0 state: {{data_dic.fan0}}</p>
+            <p> Fan1 state: {{data_dic.fan1}}</p>
+            <p> Humidifier state: {{data_dic.humidifier}}</p>
+            <p> Heater state: {{data_dic.heater}}</p>
+        </div> 
+
+        <div class="subtitle">
+            <h2>Data visualization</h2>
+        </div> 
+        <Temperature></Temperature>
+        <Humidity></Humidity>
+        <Light></Light>
+        <CO2></CO2>
+        <Moisture0></Moisture0>
+        <Moisture1></Moisture1>
+        <Moisture2></Moisture2>
+        <Moisture3></Moisture3>
     </div>
 
-    <Temperature></Temperature>
-    <Humidity></Humidity>
-    <Light></Light>
-    <CO2></CO2>
-    <Moisture0></Moisture0>
-    <Moisture1></Moisture1>
-    <Moisture2></Moisture2>
-    <Moisture3></Moisture3>
+
 
 
     <div class="control">
+        <div class="subtitle">
+            <h2>System Control</h2>
+        </div>
+        <form action="" method="POST">
+            {% csrf_token %}
+            <button class="button" type="submit" name="button_light_on" >Turn on Light</button>
+        </form>
+        <form action="" method="POST">
+            {% csrf_token %}
+            <button class="button" type="submit" name="button_light_off" >Turn off Light</button>
+        </form>
+        <form action="" method="POST">
+            {% csrf_token %}
+            <button class="button" type="submit" name="button_fan0_on" >Turn on Fan0</button>
+        </form>
+        <form action="" method="POST">
+            {% csrf_token %}
+            <button class="button" type="submit" name="button_fan0_off" >Turn off Fan0</button>
+        </form>
+        <form action="" method="POST">
+            {% csrf_token %}
+            <button class="button" type="submit" name="button_fan1_on" >Turn on Fan1</button>
+        </form>
+        <form action="" method="POST">
+            {% csrf_token %}
+            <button class="button" type="submit" name="button_fan1_off" >Turn off Fan1</button>
+        </form>
+        <form action="" method="POST">
+            {% csrf_token %}
+            <button class="button" type="submit" name="button_waterpump_on" >Turn on Water Pump for 10s</button>
+        </form>
+        <form action="" method="POST">
+            {% csrf_token %}
+            <button class="button" type="submit" name="button_humidifier_on_strong" >Increase the humidity greatly for 30min</button>
+        </form>
+        <form action="" method="POST">
+            {% csrf_token %}
+            <button class="button" type="submit" name="button_humidifier_on_weak" >Increase the humidity slightly for 30min</button>
+        </form>
+        <form action="" method="POST">
+            {% csrf_token %}
+            <button class="button" type="submit" name="button_humidifier_off" >Turn off the humidifier for 30min</button>
+        </form>
+        <form action="" method="POST">
+            {% csrf_token %}
+            <button class="button" type="submit" name="button_heater_on_strong" >Increase the temperature greatly for 30min</button>
+        </form>
+        <form action="" method="POST">
+            {% csrf_token %}
+            <button class="button" type="submit" name="button_heater_on_weak" >Increase the temperature slightly for 30min</button>
+        </form>
+        <form action="" method="POST">
+            {% csrf_token %}
+            <button class="button" type="submit" name="button_heater_off" >Turn off the heater for 30min</button>
+        </form>
 
-        <h2>System Control</h2>
+        {% comment %} Add buttons like the following: {% endcomment %}
+        {% comment %} <form action="" method="POST">
+            {% csrf_token %}
+            <button class="button" type="submit" name = "button_light_on">Turn on light</button>
+        </form>   {% endcomment %}
 
-        <form action="" method="POST">
-            {% csrf_token %}
-            <input type="submit" name="button_light_on" value="Turn on Light" />
-        </form>
-        <form action="" method="POST">
-            {% csrf_token %}
-            <input type="submit" name="button_light_off" value="Turn off Light" />
-        </form>
-        <form action="" method="POST">
-            {% csrf_token %}
-            <input type="submit" name="button_waterpump_on" value="Turn on Water Pump for 10s" />
-        </form>
-        <form action="" method="POST">
-            {% csrf_token %}
-            <input type="submit" name="button_humidifier_on_strong" value="Increase the humidity greatly for 30min" />
-        </form>
-        <form action="" method="POST">
-            {% csrf_token %}
-            <input type="submit" name="button_humidifier_on_weak" value="Increase the humidity slightly for 30min" />
-        </form>
-        <form action="" method="POST">
-            {% csrf_token %}
-            <input type="submit" name="button_heater_on_strong" value="Increase the temperature greatly for 30min" />
-        </form>
-        <form action="" method="POST">
-            {% csrf_token %}
-            <input type="submit" name="button_heater_on_weak" value="Increase the temperature slightly for 30min" />
-        </form>
-        
     </div>
 
 
@@ -121,11 +211,21 @@
         })
 
         var xScale = d3.scaleLinear()
-                    .domain([25, 0])
+                    .domain([24, 0])
                     .range([0, width - padding.left - padding.right]);
-        var yScale = d3.scaleLinear()
-                    .domain([min-5, max+5])
-                    .range([height - padding.top - padding.bottom, 0]);
+        if (type == "Temperature"){
+            var yScale = d3.scaleLinear()
+                        .domain([min-5, max+5])
+                        .range([height - padding.top - padding.bottom, 0]);
+        }else if(type == "Humidity"){
+            var yScale = d3.scaleLinear()
+                        .domain([min <= 10? 0: min - 10, max>=100? 100 : max])
+                        .range([height - padding.top - padding.bottom, 0]);
+        }else{
+            var yScale = d3.scaleLinear()
+                        .domain([Math.floor(min*0.75), Math.ceil(max*1.25)])
+                        .range([height - padding.top - padding.bottom, 0]);
+        }
 
 
         
@@ -156,7 +256,7 @@
             .attr('d', linePath(dataArray))
             .attr('fill', 'none')
             .attr('stroke-width', 3)
-            .attr('stroke', 'lightblue');
+            .attr('stroke', '#5cb3cc');
         svg.append('g')
             .selectAll('circle')
             .data(dataArray)
@@ -166,7 +266,7 @@
             .attr('transform', function(d){
                 return 'translate(' + (xScale(d[0]) + padding.left) + ',' + (yScale(d[1]) + padding.top) + ')'
             })
-            .attr('fill', 'lightblue');
+            .attr('fill', '#5cb3cc');
 
         //axis title
         svg.append("text")

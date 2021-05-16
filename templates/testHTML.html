@@ -4,11 +4,11 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>菜鸟教程(runoob.com)</title>
+<title>Test Page</title>
 </head>
 <body>
     <h1>Hello World!</h1>
-    <p>菜鸟教程 Django 测试。</p>
+    <p>Django Test</p>
     {% block mainbody %}
        <p>original</p>
     {% endblock %}
@@ -39,6 +39,11 @@
 <p> moisture3 in 24h: {{data_dic.moisture_24h_3}}</p>
 <p> temperature in 24h: {{data_dic.temperature_24h}}</p>
 <p> humidity in 24h: {{data_dic.humidity_24h}}</p>
+
+
+<p> control info: {{controlInfo_dic}}</p>
+<p> light control info: {{light_controlInfo_dic}}</p>
+<p> humidifier control info: {{humidifier_controlInfo_dic}}</p>
 
 
 <!-- <p> {{data_dic}}</p> -->

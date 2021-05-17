@@ -183,7 +183,7 @@ def device_control_helper(device, duration, on_time, off_time):
 def data_for_visualization(data_list):
     list_return = []
     for i in range(int(len(data_list)/2)):
-        list_return.append([i,data_list[i*2]])
+        list_return.append([i,data_list[i*2]if data_list[i*2] != 0 else data_list[i*2 +1]])
     return list_return
 
 def data_for_visualization_scale(data_list):

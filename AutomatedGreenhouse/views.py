@@ -85,7 +85,7 @@ def ControlPanel(request):
         Fan1.off()
         user_control_tag("fan1")
     elif 'button_waterpump_on' in request.POST:
-        device_control_single(Pump,10)
+        device_control_single(Pump,6)
         user_control_tag("waterpump")
     elif 'button_humidifier_on_strong' in request.POST:
         device_control_single(Humidifier,60*30,30,30)
@@ -130,12 +130,19 @@ def ControlPanel(request):
     return_data_dic["sensor_humidity_inside"] = data_dic["sensor_humidity_inside"][0]
     return_data_dic["sensor_humidity_outside"] = data_dic["sensor_humidity_outside"][0] if data_dic["sensor_humidity_outside"][0] < 100 else "null"
 
-    return_data_dic["light"] = "On" if data_dic["device_light"][0] == 1 else "Off"
-    return_data_dic["waterpump"] = "On" if data_dic["device_waterpump"][0] else "Off"
-    return_data_dic["fan0"] = "On" if data_dic["device_fan_0"][0] else "Off"
-    return_data_dic["fan1"] = "On" if data_dic["device_fan_1"][0] else "Off"
-    return_data_dic["humidifier"] = "On" if data_dic["device_humidifier"][0] else "Off"
-    return_data_dic["heater"] = "On" if data_dic["device_heater"][0] else "Off"
+    # return_data_dic["light"] = "On" if data_dic["device_light"][0] else "Off"
+    # return_data_dic["waterpump"] = "On" if data_dic["device_waterpump"][0] else "Off"
+    # return_data_dic["fan0"] = "On" if data_dic["device_fan_0"][0] else "Off"
+    # return_data_dic["fan1"] = "On" if data_dic["device_fan_1"][0] else "Off"
+    # return_data_dic["humidifier"] = "On" if data_dic["device_humidifier"][0] else "Off"
+    # return_data_dic["heater"] = "On" if data_dic["device_heater"][0] else "Off"
+
+    return_data_dic["light"] = data_dic["device_light"][0]
+    return_data_dic["waterpump"] = data_dic["device_waterpump"][0]
+    return_data_dic["fan0"] = data_dic["device_fan_0"][0]
+    return_data_dic["fan1"] = data_dic["device_fan_1"][0]
+    return_data_dic["humidifier"] = data_dic["device_humidifier"][0]
+    return_data_dic["heater"] = data_dic["device_heater"][0]
 
     visualization_data_dic = {}
     visualization_data_dic["light_24h"] = data_for_visualization_scale(data_dic["sensor_light_0"])
@@ -248,7 +255,7 @@ def greenhouseDBRead(request):
     dic_return["sensor_humidity_inside"] = data_dic["sensor_humidity_inside"][0]
     dic_return["sensor_humidity_outside"] = data_dic["sensor_humidity_outside"][0] if data_dic["sensor_humidity_outside"][0] < 100 else "null"
 
-    dic_return["light"] = "On" if data_dic["device_light"][0] == 1 else "Off"
+    dic_return["light"] = "On" if data_dic["device_light"][0] else "Off"
     dic_return["waterpump"] = "On" if data_dic["device_waterpump"][0] else "Off"
     dic_return["fan0"] = "On" if data_dic["device_fan_0"][0] else "Off"
     dic_return["fan1"] = "On" if data_dic["device_fan_1"][0] else "Off"

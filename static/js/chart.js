@@ -20,13 +20,9 @@ function appendGraph(type, data){
     var xScale = d3.scaleLinear()
                 .domain([24, 0])
                 .range([0, width - padding.left - padding.right]);
-    if (type == "Temperature"){
+    if (type == "Temperature" || type == "Humidity"){
         var yScale = d3.scaleLinear()
                     .domain([min-5, max+5])
-                    .range([height - padding.top - padding.bottom, 0]);
-    }else if(type == "Humidity"){
-        var yScale = d3.scaleLinear()
-                    .domain([min <= 10? 0: min - 10, max>=100? 100 : max])
                     .range([height - padding.top - padding.bottom, 0]);
     }else{
         var yScale = d3.scaleLinear()

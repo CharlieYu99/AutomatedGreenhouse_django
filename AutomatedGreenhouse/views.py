@@ -16,7 +16,9 @@ import datetime
 from .smartplug import SmartPlug
 from .Reco4lifeP10A import on
 from .Reco4lifeP10A import off
- 
+
+scale_size = 10000
+
 # device_setting
 Humidifier_setting = ("192.168.0.103", "Edimax")
 Heater_setting = ("192.168.0.102", "Edimax")
@@ -122,13 +124,13 @@ def ControlPanel(request):
 
     return_data_dic = {}
     return_data_dic["time"] = data_dic["time"][0][0:19]
-    return_data_dic["sensor_light"] = data_dic["sensor_light_0"][0]
-    return_data_dic["sensor_CO2"] = (int)((data_dic["sensor_CO2_0"][0] + data_dic["sensor_CO2_1"][0]) / 2)
-    return_data_dic["sensor_moisture"] = (int)((data_dic["sensor_moisture_0"][0] + data_dic["sensor_moisture_1"][0] + data_dic["sensor_moisture_2"][0] + data_dic["sensor_moisture_3"][0]) / 4)
-    return_data_dic["sensor_temperature_inside"] = data_dic["sensor_temperature_inside"][0]
-    return_data_dic["sensor_temperature_outside"] = data_dic["sensor_temperature_outside"][0] if data_dic["sensor_humidity_outside"][0] < 100 else "null"
-    return_data_dic["sensor_humidity_inside"] = data_dic["sensor_humidity_inside"][0]
-    return_data_dic["sensor_humidity_outside"] = data_dic["sensor_humidity_outside"][0] if data_dic["sensor_humidity_outside"][0] < 100 else "null"
+    return_data_dic["sensor_light"] = int(data_dic["sensor_light_0"][0] / scale_size)
+    return_data_dic["sensor_CO2"] = int((data_dic["sensor_CO2_0"][0] + data_dic["sensor_CO2_1"][0]) / 2 / scale_size)
+    return_data_dic["sensor_moisture"] = int((data_dic["sensor_moisture_0"][0] + data_dic["sensor_moisture_1"][0] + data_dic["sensor_moisture_2"][0] + data_dic["sensor_moisture_3"][0]) / 4 / scale_size)
+    return_data_dic["sensor_temperature_inside"] = data_dic["sensor_temperature_inside"][0] if data_dic["sensor_humidity_inside"][0] < 100 and data_dic["sensor_humidity_inside"][0] != 0 else "null"
+    return_data_dic["sensor_temperature_outside"] = data_dic["sensor_temperature_outside"][0] if data_dic["sensor_humidity_outside"][0] < 100  and data_dic["sensor_humidity_outside"][0] != 0 else "null"
+    return_data_dic["sensor_humidity_inside"] = data_dic["sensor_humidity_inside"][0] if data_dic["sensor_humidity_inside"][0] < 100 and data_dic["sensor_humidity_inside"][0] != 0 else "null"
+    return_data_dic["sensor_humidity_outside"] = data_dic["sensor_humidity_outside"][0] if data_dic["sensor_humidity_outside"][0] < 100 and data_dic["sensor_humidity_outside"][0] != 0 else "null"
 
     # return_data_dic["light"] = "On" if data_dic["device_light"][0] else "Off"
     # return_data_dic["waterpump"] = "On" if data_dic["device_waterpump"][0] else "Off"
@@ -145,24 +147,60 @@ def ControlPanel(request):
     return_data_dic["heater"] = data_dic["device_heater"][0]
 
     visualization_data_dic = {}
-    visualization_data_dic["light_24h"] = data_for_visualization_scale(data_dic["sensor_light_0"])
-    CO2_24h = data_dic["sensor_light_0"]
-    CO2_24h_ = data_dic["sensor_light_1"]
+    visualization_data_dic["light_24h"] = data_for_visualization_scale(data_dic["sensor_light_0"],2)
+    CO2_24h = data_dic["sensor_CO2_0"]
+    CO2_24h_ = data_dic["sensor_CO2_1"]
     for i in range(len(CO2_24h)):
         CO2_24h[i] += CO2_24h_[i]
-    visualization_data_dic["CO2_24h"] = data_for_visualization_scale(CO2_24h)
-    visualization_data_dic["moisture_24h_0"] = data_for_visualization_scale(data_dic["sensor_moisture_0"])
-    visualization_data_dic["moisture_24h_1"] = data_for_visualization_scale(data_dic["sensor_moisture_1"])
-    visualization_data_dic["moisture_24h_2"] = data_for_visualization_scale(data_dic["sensor_moisture_2"])
-    visualization_data_dic["moisture_24h_3"] = data_for_visualization_scale(data_dic["sensor_moisture_3"])
-    visualization_data_dic["temperature_24h"] = data_for_visualization(data_dic["sensor_temperature_inside"])
-    visualization_data_dic["humidity_24h"] = data_for_visualization(data_dic["sensor_humidity_inside"])
+        CO2_24h[i] = int(CO2_24h[i] / 2)
+    visualization_data_dic["CO2_24h"] = data_for_visualization_scale(CO2_24h,2)
+    visualization_data_dic["moisture_24h_0"] = data_for_visualization_scale(data_dic["sensor_moisture_0"],2)
+    visualization_data_dic["moisture_24h_1"] = data_for_visualization_scale(data_dic["sensor_moisture_1"],2)
+    visualization_data_dic["moisture_24h_2"] = data_for_visualization_scale(data_dic["sensor_moisture_2"],2)
+    visualization_data_dic["moisture_24h_3"] = data_for_visualization_scale(data_dic["sensor_moisture_3"],2)
+    visualization_data_dic["temperature_24h"] = data_for_visualization(data_dic["sensor_temperature_inside"],2)
+    visualization_data_dic["humidity_24h"] = data_for_visualization(data_dic["sensor_humidity_inside"],2)
 
 
     return render(request, 'ControlPanel.html', {"data_dic": return_data_dic, "visualization_data_dic": visualization_data_dic})
 
+
+
+def HistoryData(request):
+
+    dbconn=pymysql.connect(
+    host="localhost",
+    database="GreenhouseDB",
+    user="Greenhouseadmin",
+    password="adminpassword",
+    port=3306,
+    charset='utf8'
+    )
+    
+    # read the latest data
+    sqlcmd = "select * from environment_status order by id desc limit 168"
+    df=pd.read_sql(sqlcmd,dbconn)
+    data_dic = df.to_dict("list")
+
+    visualization_data_dic = {}
+    visualization_data_dic["light_7d"] = data_for_visualization_scale(data_dic["sensor_light_0"],2*6)
+    CO2_7d = data_dic["sensor_CO2_0"]
+    CO2_7d_ = data_dic["sensor_CO2_1"]
+    for i in range(len(CO2_7d)):
+        CO2_7d[i] += CO2_7d_[i]
+        CO2_7d[i] = int(CO2_7d[i] / 2)
+    visualization_data_dic["CO2_7d"] = data_for_visualization_scale(CO2_7d,2*6)
+    visualization_data_dic["moisture_7d_0"] = data_for_visualization_scale(data_dic["sensor_moisture_0"],2*6)
+    visualization_data_dic["moisture_7d_1"] = data_for_visualization_scale(data_dic["sensor_moisture_1"],2*6)
+    visualization_data_dic["moisture_7d_2"] = data_for_visualization_scale(data_dic["sensor_moisture_2"],2*6)
+    visualization_data_dic["moisture_7d_3"] = data_for_visualization_scale(data_dic["sensor_moisture_3"],2*6)
+    visualization_data_dic["temperature_7d"] = data_for_visualization(data_dic["sensor_temperature_inside"],2*6)
+    visualization_data_dic["humidity_7d"] = data_for_visualization(data_dic["sensor_humidity_inside"],2*6)
+
+    return render(request,'HistoryData.html', {"visualization_data_dic": visualization_data_dic})
+
 def index(request):
-    return render(request, 'index.html')
+    return render(request,'index.html')
 
 
 def device_control_single(device, on_time):
@@ -186,17 +224,16 @@ def device_control_helper(device, duration, on_time, off_time):
         time.sleep(off_time)
 
 
-        
-def data_for_visualization(data_list):
+def data_for_visualization(data_list,step):
     list_return = []
-    for i in range(int(len(data_list)/2)):
-        list_return.append([i,data_list[i*2]if data_list[i*2] != 0 else data_list[i*2 +1]])
+    for i in range(int(len(data_list)/step)):
+        list_return.append([i,data_list[i*step]if data_list[i*step] != 0 else data_list[i*step +1]])
     return list_return
 
-def data_for_visualization_scale(data_list):
+def data_for_visualization_scale(data_list,step):
     list_return = []
-    for i in range(int(len(data_list)/2)):
-        list_return.append([i,int(data_list[i*2]/10000)])
+    for i in range(int(len(data_list)/step)):
+        list_return.append([i,int(data_list[i*step]/scale_size if data_list[i*step] != 0 else data_list[i*step +1]/scale_size)])
     return list_return
 
 

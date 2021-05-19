@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Automated Greenhouse History Data</title>
+
+        <script src="https://d3js.org/d3.v6.min.js"></script>
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'css/style.css' %}" type="text/css">
+        <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}" type="text/css">
+        <script src="{% static 'js/chart.js' %}"></script>
+        <script src="{% static 'js/bootstrap.js' %}"></script>
+        <script src="{% static 'js/jquery.min.js' %}"></script>
+        
+    </head>
+<body>
+
+    <div class="title">
+        <h1>Automated Greenhouse History Data</h1>
+    </div>
+
+    
+    <div class="data_show">
+        <div class="subtitle">
+            <h2>Data visualization</h2>
+        </div> 
+        <Temperature></Temperature>
+        <Humidity></Humidity>
+        <Light></Light>
+        <CO2></CO2>
+        <Moisture0></Moisture0>
+        <Moisture1></Moisture1>
+        <Moisture2></Moisture2>
+        <Moisture3></Moisture3>
+    </div>
+
+
+
+
+
+
+    <script type="text/javascript">
+
+        appendGraph_7d("Temperature", {{visualization_data_dic.temperature_7d}});
+        appendGraph_7d("Humidity", {{visualization_data_dic.humidity_7d}})
+        appendGraph_7d("Light", {{visualization_data_dic.light_7d}})
+        appendGraph_7d("CO2", {{visualization_data_dic.CO2_7d}})
+        appendGraph_7d("Moisture0", {{visualization_data_dic.moisture_7d_0}})
+        appendGraph_7d("Moisture1", {{visualization_data_dic.moisture_7d_1}})
+        appendGraph_7d("Moisture2", {{visualization_data_dic.moisture_7d_2}})
+        appendGraph_7d("Moisture3", {{visualization_data_dic.moisture_7d_3}})
+
+    </script> 
+
+
+</body>
+</html>

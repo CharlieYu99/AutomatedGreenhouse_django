@@ -9,6 +9,7 @@
         <link rel="stylesheet" href="{% static 'css/style.css' %}" type="text/css">
         <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}" type="text/css">
         <script src="{% static 'js/chart.js' %}"></script>
+        <script src="{% static 'js/switch_control.js' %}"></script>
         <script src="{% static 'js/bootstrap.js' %}"></script>
         <script src="{% static 'js/jquery.min.js' %}"></script>
 
@@ -69,6 +70,8 @@
         <Moisture1></Moisture1>
         <Moisture2></Moisture2>
         <Moisture3></Moisture3>
+        <div></div>
+        <a class="button" href="../History/" target="_blank" >View history Data</a>
     </div>
 
 
@@ -78,64 +81,12 @@
         <div class="subtitle">
             <h2>System Control</h2>
         </div>
+
         {% comment %} <form action="" method="POST">
             {% csrf_token %}
             <button class="button" type="submit" name="button_light_on" >Turn on Light</button>
-        </form>
-        <form action="" method="POST">
-            {% csrf_token %}
-            <button class="button" type="submit" name="button_light_off" >Turn off Light</button>
-        </form>
-        <form action="" method="POST">
-            {% csrf_token %}
-            <button class="button" type="submit" name="button_fan0_on" >Turn on Fan0</button>
-        </form>
-        <form action="" method="POST">
-            {% csrf_token %}
-            <button class="button" type="submit" name="button_fan0_off" >Turn off Fan0</button>
-        </form>
-        <form action="" method="POST">
-            {% csrf_token %}
-            <button class="button" type="submit" name="button_fan1_on" >Turn on Fan1</button>
-        </form>
-        <form action="" method="POST">
-            {% csrf_token %}
-            <button class="button" type="submit" name="button_fan1_off" >Turn off Fan1</button>
-        </form>
-        <form action="" method="POST">
-            {% csrf_token %}
-            <button class="button" type="submit" name="button_waterpump_on" >Turn on Water Pump for 10s</button>
-        </form>
-        <form action="" method="POST">
-            {% csrf_token %}
-            <button class="button" type="submit" name="button_humidifier_on_strong" >Increase the humidity greatly for 30min</button>
-        </form>
-        <form action="" method="POST">
-            {% csrf_token %}
-            <button class="button" type="submit" name="button_humidifier_on_weak" >Increase the humidity slightly for 30min</button>
-        </form>
-        <form action="" method="POST">
-            {% csrf_token %}
-            <button class="button" type="submit" name="button_humidifier_off" >Turn off the humidifier for 30min</button>
-        </form>
-        <form action="" method="POST">
-            {% csrf_token %}
-            <button class="button" type="submit" name="button_heater_on_strong" >Increase the temperature greatly for 30min</button>
-        </form>
-        <form action="" method="POST">
-            {% csrf_token %}
-            <button class="button" type="submit" name="button_heater_on_weak" >Increase the temperature slightly for 30min</button>
-        </form>
-        <form action="" method="POST">
-            {% csrf_token %}
-            <button class="button" type="submit" name="button_heater_off" >Turn off the heater for 30min</button>
         </form> {% endcomment %}
 
-        {% comment %} Add buttons like the following: {% endcomment %}
-        {% comment %} <form action="" method="POST">
-            {% csrf_token %}
-            <button class="button" type="submit" name = "button_light_on">Turn on light</button>
-        </form>   {% endcomment %}
 
         <div class="form-check form-switch">
             <input class="form-check-input" type="checkbox" id="checkbox_light" onclick="checkbox_light_Onclick(this)">
@@ -188,6 +139,28 @@
 
     </div>
 
+    <div class="setting">
+        <div class="subtitle">
+            <h2>User setting</h2>
+        </div>
+
+        <form action="" method="POST">
+            <div class="mb-3">
+                <label for="Input_light_low" class="form-label">Light limit - low</label>
+                <input type="number" class="form-control" id="Input_light_low">
+                <div id="Input_light_low_help" class="form-text">The lower bound of the temperature of the greenhouse.</div>
+            </div>
+            <div class="mb-3">
+                <label for="Input_light_high" class="form-label">Light limit - high</label>
+                <input type="number" class="form-control" id="Input_light_high">
+                <div id="Input_light_high_help" class="form-text">The upper bound of the temperature of the greenhouse.</div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+
+    </div>
+
 
 
 
@@ -196,14 +169,14 @@
             data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
         });
 
-        appendGraph("Temperature", {{visualization_data_dic.temperature_24h}});
-        appendGraph("Humidity", {{visualization_data_dic.humidity_24h}})
-        appendGraph("Light", {{visualization_data_dic.light_24h}})
-        appendGraph("CO2", {{visualization_data_dic.CO2_24h}})
-        appendGraph("Moisture0", {{visualization_data_dic.moisture_24h_0}})
-        appendGraph("Moisture1", {{visualization_data_dic.moisture_24h_1}})
-        appendGraph("Moisture2", {{visualization_data_dic.moisture_24h_2}})
-        appendGraph("Moisture3", {{visualization_data_dic.moisture_24h_3}})
+        appendGraph_24h("Temperature", {{visualization_data_dic.temperature_24h}});
+        appendGraph_24h("Humidity", {{visualization_data_dic.humidity_24h}})
+        appendGraph_24h("Light", {{visualization_data_dic.light_24h}})
+        appendGraph_24h("CO2", {{visualization_data_dic.CO2_24h}})
+        appendGraph_24h("Moisture0", {{visualization_data_dic.moisture_24h_0}})
+        appendGraph_24h("Moisture1", {{visualization_data_dic.moisture_24h_1}})
+        appendGraph_24h("Moisture2", {{visualization_data_dic.moisture_24h_2}})
+        appendGraph_24h("Moisture3", {{visualization_data_dic.moisture_24h_3}})
 
         var checkbox_light = document.getElementById('checkbox_light');
         checkbox_light.checked = {{data_dic.light}} == 1;
@@ -224,7 +197,7 @@
         var checkbox_waterpump = document.getElementById('btnradio_waterpump');
 
 
-        function checkbox_light_Onclick(checkbox){
+        {% comment %} function checkbox_light_Onclick(checkbox){
             if ( checkbox.checked == true){
                 $.ajax({
                     type: "POST",
@@ -332,7 +305,7 @@
                 });
                 checkbox_waterpump.checked = false;
             }
-        }
+        } {% endcomment %}
 
 
     </script> 

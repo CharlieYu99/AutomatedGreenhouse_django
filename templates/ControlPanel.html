@@ -145,20 +145,45 @@
         </div>
 
         <form action="" method="POST">
+            {% csrf_token %}
             <div class="mb-3">
                 <label for="Input_light_low" class="form-label">Light limit - low</label>
-                <input type="number" class="form-control" id="Input_light_low">
-                <div id="Input_light_low_help" class="form-text">The lower bound of the temperature of the greenhouse.</div>
+                <input type="number" class="form-control" id="Input_light_low" name="Input_light_low">
+                <div id="Input_light_low_help" class="form-text">The lower bound of the light of the greenhouse.</div>
             </div>
             <div class="mb-3">
                 <label for="Input_light_high" class="form-label">Light limit - high</label>
-                <input type="number" class="form-control" id="Input_light_high">
-                <div id="Input_light_high_help" class="form-text">The upper bound of the temperature of the greenhouse.</div>
+                <input type="number" class="form-control" id="Input_light_high" name="Input_light_high">
+                <div id="Input_light_high_help" class="form-text">The upper bound of the light of the greenhouse.</div>
+            </div>
+            <div class="mb-3">
+                <label for="Input_temperature_low" class="form-label">Temperature limit - low</label>
+                <input type="number" class="form-control" id="Input_temperature_low" name="Input_temperature_low">
+                <div id="Input_temperature_low_help" class="form-text">The lower bound of the temperature of the greenhouse.</div>
+            </div>
+            <div class="mb-3">
+                <label for="Input_temperature_high" class="form-label">Temperature limit - high</label>
+                <input type="number" class="form-control" id="Input_temperature_high" name="Input_temperature_high">
+                <div id="Input_temperature_high_help" class="form-text">The upper bound of the temperature of the greenhouse.</div>
+            </div>
+            <div class="mb-3">
+                <label for="Input_humidity_low" class="form-label">Humidity limit - low</label>
+                <input type="number" class="form-control" id="Input_humidity_low" name="Input_humidity_low">
+                <div id="Input_humidity_low_help" class="form-text">The lower bound of the humidity of the greenhouse.</div>
+            </div>
+            <div class="mb-3">
+                <label for="Input_humidity_high" class="form-label">Humidity limit - high</label>
+                <input type="number" class="form-control" id="Input_humidity_high" name="Input_humidity_high">
+                <div id="Input_humidity_high_help" class="form-text">The upper bound of the humidity of the greenhouse.</div>
+            </div>
+            <div class="mb-3">
+                <label for="Input_moisture_low" class="form-label">Moisture limit - low</label>
+                <input type="number" class="form-control" id="Input_moisture_low" name="Input_moisture_low">
+                <div id="Input_moisture_low_help" class="form-text">The lower bound of the moisture of the greenhouse.</div>
             </div>
 
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-primary" name="button_setting_submit">Submit</button>
         </form>
-
     </div>
 
 
@@ -196,116 +221,6 @@
         checkbox_heater_weak.checked = {{data_dic.heater}} == 1;
         var checkbox_waterpump = document.getElementById('btnradio_waterpump');
 
-
-        {% comment %} function checkbox_light_Onclick(checkbox){
-            if ( checkbox.checked == true){
-                $.ajax({
-                    type: "POST",
-                    url: "",
-                    data: {"button_light_on": "",},
-                });
-            }else{
-                $.ajax({
-                    type: "POST",
-                    url: "",
-                    data: {"button_light_off": "",},
-                });
-            }
-        }
-        function checkbox_fan0_Onclick(checkbox){
-            if ( checkbox.checked == true){
-                $.ajax({
-                    type: "POST",
-                    url: "",
-                    data: {"button_fan0_on": "",},
-                });
-            }else{
-                $.ajax({
-                    type: "POST",
-                    url: "",
-                    data: {"button_fan0_off": "",},
-                });
-            }
-        }
-        function checkbox_fan1_Onclick(checkbox){
-            if (checkbox.checked == true){
-                $.ajax({
-                    type: "POST",
-                    url: "",
-                    data: {"button_fan1_on": "",},
-                });
-            }else{
-                $.ajax({
-                    type: "POST",
-                    url: "",
-                    data: {"button_fan1_off": "",},
-                });
-            }
-        }
-        function checkbox_humidifier_off_Onclick(checkbox){
-            if (checkbox.checked == true){
-                $.ajax({
-                    type: "POST",
-                    url: "",
-                    data: {"button_humidifier_off": "",},
-                });
-            }
-        }
-        function checkbox_humidifier_weak_Onclick(checkbox){
-            if (checkbox.checked == true){
-                $.ajax({
-                    type: "POST",
-                    url: "",
-                    data: {"button_humidifier_on_weak": "",},
-                });
-            }
-        }
-        function checkbox_humidifier_strong_Onclick(checkbox){
-            if (checkbox.checked == true){
-                $.ajax({
-                    type: "POST",
-                    url: "",
-                    data: {"button_humidifier_on_strong": "",},
-                });
-            }
-        }
-        function checkbox_heater_off_Onclick(checkbox){
-            if (checkbox.checked == true){
-                $.ajax({
-                    type: "POST",
-                    url: "",
-                    data: {"button_heater_off": "",},
-                });
-            }
-        }
-        function checkbox_heater_weak_Onclick(checkbox){
-            if (checkbox.checked == true){
-                $.ajax({
-                    type: "POST",
-                    url: "",
-                    data: {"button_heater_on_weak": "",},
-                });
-            }
-        }
-        function checkbox_heater_strong_Onclick(checkbox){
-            if (checkbox.checked == true){
-                $.ajax({
-                    type: "POST",
-                    url: "",
-                    data: {"button_heater_on_strong": "",},
-                });
-            }
-        }
-        function checkbox_waterpump_Onclick(checkbox){
-            if (checkbox.checked == true){
-                $.ajax({
-                    type: "POST",
-                    url: "",
-                    data: {"button_waterpump_on": "",},
-                });
-                checkbox_waterpump.checked = false;
-            }
-        } {% endcomment %}
 
 
     </script> 

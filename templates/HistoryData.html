@@ -22,16 +22,36 @@
     
     <div class="data_show">
         <div class="subtitle">
+            <h2>Device status</h2>
+        </div> 
+        <Light></Light>
+        <Waterpump></Waterpump>
+        <Humidifier></Humidifier>
+        <Heater></Heater>
+        <Fan0></Fan0>
+        <Fan1></Fan1>
+
+        <div class="subtitle">
             <h2>Data visualization</h2>
         </div> 
-        <Temperature></Temperature>
-        <Humidity></Humidity>
-        <Light></Light>
-        <CO2></CO2>
-        <Moisture0></Moisture0>
-        <Moisture1></Moisture1>
-        <Moisture2></Moisture2>
-        <Moisture3></Moisture3>
+
+        <Temperature_7d></Temperature_7d>
+        <Humidity_7d></Humidity_7d>
+        <Light_7d></Light_7d>
+        <CO2_7d></CO2_7d>
+        <Moisture0_7d></Moisture0_7d>
+        <Moisture1_7d></Moisture1_7d>
+        <Moisture2_7d></Moisture2_7d>
+        <Moisture3_7d></Moisture3_7d>
+        <div></div>
+        <Temperature_30d></Temperature_30d>
+        <Humidity_30d></Humidity_30d>
+        <Light_30d></Light_30d>
+        <CO2_30d></CO2_30d>
+        <Moisture0_30d></Moisture0_30d>
+        <Moisture1_30d></Moisture1_30d>
+        <Moisture2_30d></Moisture2_30d>
+        <Moisture3_30d></Moisture3_30d>
     </div>
 
 
@@ -41,6 +61,14 @@
 
     <script type="text/javascript">
 
+        appendGraph_device_24h("Light", {{visualization_data_dic.light_24h}});
+        appendGraph_device_24h("Waterpump", {{visualization_data_dic.waterpump_24h}});
+        appendGraph_device_24h("Humidifier", {{visualization_data_dic.humidifier_24h}});
+        appendGraph_device_24h("Heater", {{visualization_data_dic.heater_24h}});
+        appendGraph_device_24h("Fan0", {{visualization_data_dic.fan0_24h}});
+        appendGraph_device_24h("Fan1", {{visualization_data_dic.fan1_24h}});
+
+
         appendGraph_7d("Temperature", {{visualization_data_dic.temperature_7d}});
         appendGraph_7d("Humidity", {{visualization_data_dic.humidity_7d}})
         appendGraph_7d("Light", {{visualization_data_dic.light_7d}})
@@ -49,6 +77,15 @@
         appendGraph_7d("Moisture1", {{visualization_data_dic.moisture_7d_1}})
         appendGraph_7d("Moisture2", {{visualization_data_dic.moisture_7d_2}})
         appendGraph_7d("Moisture3", {{visualization_data_dic.moisture_7d_3}})
+        
+        appendGraph_30d("Temperature", {{visualization_data_dic.temperature_30d}});
+        appendGraph_30d("Humidity", {{visualization_data_dic.humidity_30d}})
+        appendGraph_30d("Light", {{visualization_data_dic.light_30d}})
+        appendGraph_30d("CO2", {{visualization_data_dic.CO2_30d}})
+        appendGraph_30d("Moisture0", {{visualization_data_dic.moisture_30d_0}})
+        appendGraph_30d("Moisture1", {{visualization_data_dic.moisture_30d_1}})
+        appendGraph_30d("Moisture2", {{visualization_data_dic.moisture_30d_2}})
+        appendGraph_30d("Moisture3", {{visualization_data_dic.moisture_30d_3}})
 
     </script> 
 

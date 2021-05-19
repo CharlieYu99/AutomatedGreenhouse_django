@@ -107,6 +107,28 @@ def ControlPanel(request):
     elif 'button_heater_off' in request.POST:
         Heater.off()
         user_control_tag("heater")
+    elif 'button_setting_submit' in request.POST:
+        light_limit_low = request.POST.get("Input_light_low") if request.POST.get("Input_light_low") != "" else None
+        light_limit_high = request.POST.get("Input_light_high") if request.POST.get("Input_light_high") != "" else None
+        temperature_limit_low = request.POST.get("Input_temperature_low") if request.POST.get("Input_temperature_low") != "" else None
+        temperature_limit_high = request.POST.get("Input_temperature_high") if request.POST.get("Input_temperature_high") != "" else None
+        humidity_limit_low = request.POST.get("Input_humidity_low") if request.POST.get("Input_humidity_low") != "" else None
+        humidity_limit_high = request.POST.get("Input_humidity_high") if request.POST.get("Input_humidity_high") != "" else None
+        moisture_limit_low = request.POST.get("Input_moisture_low") if request.POST.get("Input_moisture_low") != "" else None
+        conn=pymysql.connect(host='localhost',
+                                port=3306,
+                                user='Greenhouseadmin',
+                                password='adminpassword',
+                                db='GreenhouseDB',
+                                charset='utf8')
+        cur=conn.cursor()
+        sql = "INSERT INTO user_settings (light_limit_low, light_limit_high, temperature_limit_low, temperature_limit_high, humidity_limit_low, humidity_limit_high, moisture_limit_low) VALUES (%s, %s, %s, %s, %s, %s, %s);"
+        val = (light_limit_low, light_limit_high, temperature_limit_low, temperature_limit_high, humidity_limit_low, humidity_limit_high, moisture_limit_low)
+        cur.execute(sql,val)
+        conn.commit()
+        cur.close()
+        conn.close()
+
 
     dbconn=pymysql.connect(
     host="localhost",
@@ -177,25 +199,61 @@ def HistoryData(request):
     charset='utf8'
     )
     
+    visualization_data_dic = {}
+
     # read the latest data
-    sqlcmd = "select * from environment_status order by id desc limit 168"
+    sqlcmd = "select * from environment_status order by id desc limit 48"
     df=pd.read_sql(sqlcmd,dbconn)
     data_dic = df.to_dict("list")
 
-    visualization_data_dic = {}
-    visualization_data_dic["light_7d"] = data_for_visualization_scale(data_dic["sensor_light_0"],2*6)
+    visualization_data_dic["light_24h"] = data_for_visualization(data_dic["device_light"],2)
+    visualization_data_dic["waterpump_24h"] = data_for_visualization(data_dic["device_waterpump"],2)
+    visualization_data_dic["fan0_24h"] = data_for_visualization(data_dic["device_fan_0"],2)
+    visualization_data_dic["fan1_24h"] = data_for_visualization(data_dic["device_fan_1"],2)
+    visualization_data_dic["humidifier_24h"] = data_for_visualization(data_dic["device_humidifier"],2)
+    visualization_data_dic["heater_24h"] = data_for_visualization(data_dic["device_heater"],2)
+
+    # read the latest data
+    sqlcmd = "select * from environment_status order by id desc limit 336"
+    df=pd.read_sql(sqlcmd,dbconn)
+    data_dic = df.to_dict("list")
+
+    step_7d = 2*6
+
+    visualization_data_dic["light_7d"] = data_for_visualization_scale(data_dic["sensor_light_0"],step_7d)
     CO2_7d = data_dic["sensor_CO2_0"]
     CO2_7d_ = data_dic["sensor_CO2_1"]
     for i in range(len(CO2_7d)):
         CO2_7d[i] += CO2_7d_[i]
         CO2_7d[i] = int(CO2_7d[i] / 2)
-    visualization_data_dic["CO2_7d"] = data_for_visualization_scale(CO2_7d,2*6)
-    visualization_data_dic["moisture_7d_0"] = data_for_visualization_scale(data_dic["sensor_moisture_0"],2*6)
-    visualization_data_dic["moisture_7d_1"] = data_for_visualization_scale(data_dic["sensor_moisture_1"],2*6)
-    visualization_data_dic["moisture_7d_2"] = data_for_visualization_scale(data_dic["sensor_moisture_2"],2*6)
-    visualization_data_dic["moisture_7d_3"] = data_for_visualization_scale(data_dic["sensor_moisture_3"],2*6)
-    visualization_data_dic["temperature_7d"] = data_for_visualization(data_dic["sensor_temperature_inside"],2*6)
-    visualization_data_dic["humidity_7d"] = data_for_visualization(data_dic["sensor_humidity_inside"],2*6)
+    visualization_data_dic["CO2_7d"] = data_for_visualization_scale(CO2_7d,step_7d)
+    visualization_data_dic["moisture_7d_0"] = data_for_visualization_scale(data_dic["sensor_moisture_0"],step_7d)
+    visualization_data_dic["moisture_7d_1"] = data_for_visualization_scale(data_dic["sensor_moisture_1"],step_7d)
+    visualization_data_dic["moisture_7d_2"] = data_for_visualization_scale(data_dic["sensor_moisture_2"],step_7d)
+    visualization_data_dic["moisture_7d_3"] = data_for_visualization_scale(data_dic["sensor_moisture_3"],step_7d)
+    visualization_data_dic["temperature_7d"] = data_for_visualization(data_dic["sensor_temperature_inside"],step_7d)
+    visualization_data_dic["humidity_7d"] = data_for_visualization(data_dic["sensor_humidity_inside"],step_7d)
+
+    sqlcmd = "select * from environment_status order by id desc limit 1440"
+    df=pd.read_sql(sqlcmd,dbconn)
+    data_dic = df.to_dict("list")
+
+    step_30d = 2*24
+    visualization_data_dic["light_30d"] = data_for_visualization_scale(data_dic["sensor_light_0"],step_30d)
+    CO2_30d = data_dic["sensor_CO2_0"]
+    CO2_30d_ = data_dic["sensor_CO2_1"]
+    for i in range(len(CO2_30d)):
+        CO2_30d[i] += CO2_30d_[i]
+        CO2_30d[i] = int(CO2_30d[i] / 2)
+    visualization_data_dic["CO2_30d"] = data_for_visualization_scale(CO2_30d,step_30d)
+    visualization_data_dic["moisture_30d_0"] = data_for_visualization_scale(data_dic["sensor_moisture_0"],step_30d)
+    visualization_data_dic["moisture_30d_1"] = data_for_visualization_scale(data_dic["sensor_moisture_1"],step_30d)
+    visualization_data_dic["moisture_30d_2"] = data_for_visualization_scale(data_dic["sensor_moisture_2"],step_30d)
+    visualization_data_dic["moisture_30d_3"] = data_for_visualization_scale(data_dic["sensor_moisture_3"],step_30d)
+    visualization_data_dic["temperature_30d"] = data_for_visualization(data_dic["sensor_temperature_inside"],step_30d)
+    visualization_data_dic["humidity_30d"] = data_for_visualization(data_dic["sensor_humidity_inside"],step_30d)
+
+
 
     return render(request,'HistoryData.html', {"visualization_data_dic": visualization_data_dic})
 

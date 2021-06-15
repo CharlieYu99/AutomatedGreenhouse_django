@@ -87,7 +87,7 @@ def ControlPanel(request):
         Fan1.off()
         user_control_tag("fan1")
     elif 'button_waterpump_on' in request.POST:
-        device_control_single(Pump,6)
+        device_control_single(Pump,6,6,0)
         user_control_tag("waterpump")
     elif 'button_humidifier_on_strong' in request.POST:
         device_control_single(Humidifier,60*30,30,30)
@@ -98,7 +98,7 @@ def ControlPanel(request):
     elif 'button_humidifier_off' in request.POST:
         Humidifier.off()
         user_control_tag("humidifier")
-    elif 'button_heeter_on_strong' in request.POST:
+    elif 'button_heater_on_strong' in request.POST:
         device_control_single(Heater,60*30,30,150)
         user_control_tag("heater")
     elif 'button_heater_on_weak' in request.POST:

@@ -97,7 +97,7 @@ function checkbox_heater_strong_Onclick(checkbox){
         });
     }
 }
-function checkbox_waterpump_Onclick(checkbox){
+function checkbox_waterpump_on_Onclick(checkbox){
     if (checkbox.checked == true){
         $.ajax({
             type: "POST",

@@ -197,7 +197,7 @@ function appendGraph_7d(type, data){
     })
 
     var xScale = d3.scaleLinear()
-                .domain([24, 0])
+                .domain([28, 0])
                 .range([0, width - padding.left - padding.right]);
     if (type == "Temperature" || type == "Humidity"){
         var yScale = d3.scaleLinear()
@@ -289,7 +289,7 @@ function appendGraph_30d(type, data){
     })
 
     var xScale = d3.scaleLinear()
-                .domain([24, 0])
+                .domain([30, 0])
                 .range([0, width - padding.left - padding.right]);
     if (type == "Temperature" || type == "Humidity"){
         var yScale = d3.scaleLinear()
